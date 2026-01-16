@@ -1,0 +1,1357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>DMSc Decision Scenarios: Acute Cardiac Events</title>
+  <style>
+    :root{
+      --bg:#f7fafc;
+      --surface:#ffffff;
+      --surface2:#f1f5f9;
+      --text:#0f172a;
+      --muted:#334155;
+      --border:#cbd5e1;
+      --focus:#7c3aed;
+      --choice:#0b5fff;      /* distinctive decision button color */
+      --choiceHover:#0847ba;
+      --good:#137333;
+      --warn:#b45309;
+      --bad:#b42318;
+      --shadow: 0 10px 30px rgba(2,6,23,.08);
+      --radius: 16px;
+    }
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      line-height:1.55;
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    a{color:var(--choice);}
+    a:focus{outline:3px solid var(--focus); outline-offset:2px;}
+
+    .skip{
+      position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden;
+    }
+    .skip:focus{
+      left:12px; top:12px; width:auto; height:auto; padding:10px 12px; z-index:9999;
+      background:var(--surface); border:2px solid var(--focus); border-radius:10px;
+    }
+
+    header{
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      max-width:1180px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:0;}
+    .brand img{width:44px; height:44px; border-radius:10px; box-shadow: var(--shadow);}
+    .brand .titles{min-width:0;}
+    .brand h1{font-size:18px; margin:0;}
+    .brand p{margin:0; color:var(--muted); font-size:13px;}
+
+    .top-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+
+    main{
+      max-width:1180px;
+      margin:0 auto;
+      padding:18px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    @media (max-width: 980px){
+      .layout{grid-template-columns:1fr;}
+      .top-actions{justify-content:flex-start;}
+    }
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card .pad{padding:16px;}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      background:var(--surface2);
+      color:var(--muted);
+      font-size:12px;
+      margin:0 0 10px 0;
+    }
+
+    h2{margin:0 0 8px 0; font-size:20px;}
+    h3{margin:18px 0 8px 0; font-size:16px;}
+    p{margin:0 0 10px 0;}
+    ul{margin:0 0 10px 18px;}
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--surface);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+      cursor:pointer;
+      min-height:44px;
+      color:var(--text);
+    }
+    .btn:hover{background:var(--surface2);}
+    .btn:focus{outline:3px solid var(--focus); outline-offset:2px;}
+    .btn[disabled]{opacity:.55; cursor:not-allowed;}
+
+    .btn-primary{
+      border-color: transparent;
+      background: var(--choice);
+      color: #fff;
+    }
+    .btn-primary:hover{background: var(--choiceHover);}
+
+    .btn-ghost{
+      background: transparent;
+    }
+
+    .grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .case-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .case-grid{grid-template-columns:1fr;}
+    }
+
+    .case-card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 180px;
+    }
+    .case-card h3{margin:0;}
+    .case-meta{color:var(--muted); font-size:13px;}
+
+    .tag{
+      display:inline-flex;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--surface2);
+      color:var(--muted);
+      width:fit-content;
+      margin-bottom:6px;
+    }
+
+    .choices{display:grid; gap:10px; margin-top:10px;}
+    .choice-btn{
+      text-align:left;
+      border:2px solid transparent;
+      background: var(--choice);
+      color:#fff;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:700;
+      min-height: 52px;
+      cursor:pointer;
+    }
+    .choice-btn:hover{background: var(--choiceHover);}
+    .choice-btn:focus{outline:3px solid var(--focus); outline-offset:2px;}
+
+    .note{
+      border-left:4px solid var(--border);
+      padding:10px 12px;
+      background: var(--surface2);
+      border-radius: 12px;
+      color: var(--muted);
+    }
+
+    .alert{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding:12px;
+      background: var(--surface);
+    }
+    .alert.good{border-color: rgba(19,115,51,.35);}
+    .alert.warn{border-color: rgba(180,83,9,.35);}
+    .alert.bad{border-color: rgba(180,35,24,.35);}
+    .alert strong{display:block; margin-bottom:6px;}
+
+    .divider{height:1px; background:var(--border); margin:14px 0;}
+
+    .sidebar h3{margin-top:0;}
+    .kp{margin:0; padding-left:18px;}
+    .kp li{margin:0 0 8px 0; color:var(--muted);}
+
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+
+    .progress{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color:var(--muted); font-size:13px;
+    }
+
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      background:var(--surface2);
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .lab-list{display:grid; gap:8px; margin:10px 0 0 0;}
+    .lab-item{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--surface);
+    }
+    .lab-item input{margin-top:3px; width:18px; height:18px;}
+
+    .footer-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+
+    /* Certificate (print friendly) */
+    .certificate{
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 2px solid #94a3b8;
+      border-radius: 18px;
+      padding: 24px;
+    }
+    .certificate .row{display:flex; gap:18px; align-items:center; flex-wrap:wrap;}
+    .certificate img{width:64px; height:64px; border-radius:12px;}
+    .certificate h2{margin:0; font-size:22px;}
+
+    @media print{
+      header, .top-actions, .no-print{display:none !important;}
+      body{background:#fff;}
+      main{max-width:none; padding:0;}
+      .card{box-shadow:none; border:none;}
+      .layout{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand" aria-label="University of Lynchburg DMSc decision scenarios">
+        <img id="logoImg" alt="University of Lynchburg DMSc logo" />
+        <div class="titles">
+          <h1>Acute Cardiac Events — Decision Scenarios</h1>
+          <p>Choose-your-path clinical reasoning for DMSc PA students</p>
+        </div>
+      </div>
+
+      <div class="top-actions no-print">
+        <button class="btn" id="btnHome" type="button">Home</button>
+        <button class="btn btn-ghost" id="btnReset" type="button">Reset progress</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="layout">
+      <section class="card" aria-labelledby="screenTitle">
+        <div class="pad">
+          <div class="pill" id="screenPill">Welcome</div>
+          <h2 id="screenTitle">Loading…</h2>
+          <div id="screen" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside class="card sidebar" aria-label="Key points reference">
+        <div class="pad">
+          <h3>Key points (reference)</h3>
+          <p class="note" id="sidebarContext">This sidebar updates as you move through a case.</p>
+          <ul class="kp" id="keyPoints"></ul>
+          <div class="divider"></div>
+          <p class="note"><strong>Reminder:</strong> This activity is for education only and does not provide medical advice.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // Embedded logo (single-file deployment)
+    const LOGO_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEwWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI2LTAxLTE0PC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjQyN2I1NzQwLTc1MzQtNDBjNy04ZWVjLTE5NGQ3YWU5NGZkYzwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5VbnRpdGxlZCBkZXNpZ24gLSAxPC9yZGY6bGk+CiAgIDwvcmRmOkFsdD4KICA8L2RjOnRpdGxlPgogPC9yZGY6RGVzY3JpcHRpb24+CgogPHJkZjpEZXNjcmlwdGlv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";
+
+    // ---------- Utilities ----------
+    const $ = (sel) => document.querySelector(sel);
+    const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+
+    const STORAGE_KEY = 'dmsc_acute_cardiac_scenarios_v1';
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return null;
+        return JSON.parse(raw);
+      }catch{ return null; }
+    }
+
+    function saveState(next){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    }
+
+    function defaultState(){
+      return {
+        startedAt: new Date().toISOString(),
+        cases: {
+          case1: { status:'not_started', node:'intro', decisions:[], labs:[] },
+          case2: { status:'not_started', node:'intro', decisions:[], labs:[] },
+          case3: { status:'not_started', node:'intro', decisions:[], labs:[] },
+        },
+        certificate: { issued:false, issuedAt:null, studentName:'' }
+      };
+    }
+
+    function getState(){
+      return loadState() ?? defaultState();
+    }
+
+    function setState(mutator){
+      const cur = getState();
+      const next = mutator(structuredClone(cur));
+      saveState(next);
+      return next;
+    }
+
+    function fmtDate(d){
+      const dt = (d instanceof Date) ? d : new Date(d);
+      return dt.toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+    }
+
+    // ---------- Content (derived from Week 1 Acute Cardiac Events lecture) ----------
+    // (Troponin indicates myocardial injury; clinical context, trend, EKG and imaging guide management.
+    // Type 1 MI vs Type 2 MI; non-ischemic causes include myocarditis, PE, sepsis-related dysfunction, renal failure, Takotsubo, trauma.)
+
+    const GLOBAL_KEY_POINTS = [
+      "Troponin elevation indicates myocardial injury, not mechanism; trend and clinical context matter.",
+      "Type 1 MI: plaque rupture/thrombosis → ischemic symptoms, ischemic EKG changes, dynamic troponin rise/fall; treat as ACS.",
+      "Type 2 MI: supply–demand mismatch (e.g., sepsis, hypoxia, anemia, tachyarrhythmia) → treat the underlying stressor.",
+      "Non-ischemic injury can occur with myocarditis, pulmonary embolism, sepsis-related dysfunction, renal failure, Takotsubo, or blunt trauma.",
+      "Approach: assess symptoms/hemodynamics → review EKG → trend troponin → identify stressors → use imaging selectively."
+    ];
+
+    // Each case is a small directed graph. Nodes render narrative + decision(s).
+    // "Wrong" choices are not blocked; they branch into realistic consequences.
+
+    const CASES = {
+      case1: {
+        title: "Case 1 — STEMI with time-sensitive reperfusion",
+        tag: "Reperfusion priority",
+        brief: "A classic STEMI presentation where minutes matter.",
+        nodes: {
+          intro: {
+            pill: "Case 1",
+            sidebar: [
+              "ST-elevation on EKG + ischemic symptoms → activate reperfusion pathway.",
+              "Treat the patient and EKG, not troponin alone."
+            ],
+            html: () => `
+              <p><strong>Patient:</strong> 58-year-old with crushing substernal chest pressure radiating to left arm for 45 minutes, diaphoresis, nausea.</p>
+              <div class="chips" aria-label="Initial vitals">
+                <span class="chip">BP 92/58</span>
+                <span class="chip">HR 108</span>
+                <span class="chip">RR 20</span>
+                <span class="chip">SpO₂ 95% RA</span>
+              </div>
+              <p class="note"><strong>Setting:</strong> ED triage. You are the covering PA on a critical care team.</p>
+              <h3>Decision 1</h3>
+              <p>What is your <strong>first</strong> action?</p>
+            `,
+            choices: [
+              { id:'c1_d1_ekg', label:"Obtain a 12‑lead EKG immediately and place on monitor", to:'ekg' },
+              { id:'c1_d1_trop', label:"Order high‑sensitivity troponin first, then decide", to:'delay_trop' },
+              { id:'c1_d1_gi', label:"Treat as GERD initially (GI cocktail) and reassess", to:'delay_gi' },
+            ]
+          },
+          ekg: {
+            pill:"Case 1",
+            sidebar:[
+              "ST-elevation in contiguous leads with ischemic symptoms → STEMI until proven otherwise.",
+              "Hypotension may indicate RV involvement, cardiogenic shock, or mechanical complications."
+            ],
+            html: () => `
+              <div class="alert good"><strong>Result:</strong> EKG shows ST elevation in II, III, aVF with reciprocal ST depression in I and aVL.</div>
+              <p>Patient remains hypotensive and uncomfortable.</p>
+              <h3>Decision 2</h3>
+              <p>Best next step?</p>
+            `,
+            choices: [
+              { id:'c1_d2_activate', label:"Activate cath lab / STEMI alert; give aspirin; start ACS pathway per protocol", to:'reperfusion' },
+              { id:'c1_d2_ct', label:"Send for CT chest to rule out dissection before acting", to:'delay_ct' },
+              { id:'c1_d2_wait', label:"Wait for first troponin before calling cardiology", to:'delay_wait' },
+            ]
+          },
+          delay_trop: {
+            pill:"Case 1",
+            sidebar:[
+              "Troponin is sensitive but not instantaneous; initial management in suspected STEMI is driven by symptoms + EKG.",
+              "Delays in reperfusion increase infarct size and risk of shock/arrhythmia."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> Troponin is sent, but the patient deteriorates while waiting. He becomes more hypotensive and diaphoretic.</div>
+              <p>Meanwhile, a bedside EKG is still pending.</p>
+              <h3>Decision (recover)</h3>
+              <p>What do you do now?</p>
+            `,
+            choices: [
+              { id:'c1_recover_ekg', label:"Obtain the 12‑lead EKG now and manage based on findings", to:'ekg' },
+              { id:'c1_recover_fluids', label:"Give large fluid bolus first without EKG", to:'fluid_only' },
+            ]
+          },
+          delay_gi: {
+            pill:"Case 1",
+            sidebar:[
+              "Atypical presentations happen, but classic ischemic symptoms warrant immediate cardiac evaluation.",
+              "Anchoring bias can delay life-saving reperfusion."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> Symptoms transiently improve but then rebound. The patient develops ventricular ectopy and increasing hypotension.</div>
+              <p>Nursing requests permission to obtain an EKG.</p>
+              <h3>Decision (recover)</h3>
+              <p>Next step?</p>
+            `,
+            choices: [
+              { id:'c1_gi_to_ekg', label:"Yes — obtain EKG immediately, place on monitor", to:'ekg' },
+              { id:'c1_gi_to_discharge', label:"Assume GI etiology and discharge with PPI", to:'near_miss' },
+            ]
+          },
+          fluid_only: {
+            pill:"Case 1",
+            sidebar:[
+              "In inferior MI with possible RV involvement, cautious fluids may help, but you must confirm diagnosis promptly.",
+              "Always reassess after an intervention."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> After fluids, BP improves slightly, but chest pain persists. Diagnosis remains unclear without EKG.</div>
+              <p>A 12‑lead EKG is now obtained.</p>
+            `,
+            choices: [
+              { id:'c1_fluid_to_ekg', label:"Interpret EKG and proceed", to:'ekg' }
+            ]
+          },
+          near_miss: {
+            pill:"Case 1",
+            sidebar:[
+              "Discharging ongoing chest pain without EKG/risk stratification is unsafe.",
+              "Systems: handoff, safety nets, and escalation can prevent adverse outcomes."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Outcome:</strong> In the parking lot, the patient collapses and returns in cardiac arrest. ROSC is achieved, but neurologic outcome is uncertain.</div>
+              <p class="note"><strong>Teaching point:</strong> Even when symptoms seem to improve, ischemic etiologies must be ruled out first.</p>
+              <div class="divider"></div>
+              <p>Let’s continue the case as if the team recognized STEMI earlier.</p>
+            `,
+            choices: [
+              { id:'c1_restart_to_ekg', label:"Rewind to EKG-based evaluation", to:'ekg' }
+            ]
+          },
+          delay_ct: {
+            pill:"Case 1",
+            sidebar:[
+              "Aortic dissection is a critical consideration, but routine CT in classic inferior STEMI can delay reperfusion.",
+              "Use clinical features: tearing pain, pulse deficit, widened mediastinum, neuro deficits."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> CT transport delays reperfusion. CT shows no dissection, but the patient’s pain and hypotension worsen.</div>
+              <h3>Decision (recover)</h3>
+              <p>Now what?</p>
+            `,
+            choices: [
+              { id:'c1_ct_to_cath', label:"Activate cath lab now; start ACS pathway", to:'reperfusion' },
+              { id:'c1_ct_to_wait', label:"Continue to wait for troponin", to:'delay_wait' },
+            ]
+          },
+          delay_wait: {
+            pill:"Case 1",
+            sidebar:[
+              "Waiting for troponin in STEMI delays definitive therapy.",
+              "Time = myocardium; early activation reduces door-to-balloon time."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> The first troponin returns elevated, but the patient develops sustained VT requiring cardioversion.</div>
+              <p>After stabilization, cardiology is finally called.</p>
+            `,
+            choices: [
+              { id:'c1_wait_to_cath', label:"Activate cath lab now; proceed", to:'reperfusion' }
+            ]
+          },
+          reperfusion: {
+            pill:"Case 1",
+            sidebar:[
+              "Definitive STEMI care: reperfusion + antiplatelet/anticoagulation per protocol and consult cardiology.",
+              "Assess for shock and complications; consider bedside echo." 
+            ],
+            html: () => `
+              <div class="alert good"><strong>Action:</strong> STEMI alert activated. Aspirin given. Patient taken for emergent PCI.</div>
+              <p><strong>Cath result:</strong> 100% RCA occlusion → stent placed. BP improves.</p>
+              <h3>Wrap-up</h3>
+              <p>Before transfer to ICU, what monitoring/next step is most appropriate?</p>
+            `,
+            choices: [
+              { id:'c1_wrap_echo', label:"Order echocardiogram to assess wall motion/RV function; continuous telemetry", to:'end' },
+              { id:'c1_wrap_discharge', label:"Discharge from cath lab once pain resolves", to:'end_consequence' },
+            ]
+          },
+          end_consequence: {
+            pill:"Case 1",
+            sidebar:["Post‑MI patients need monitoring for arrhythmias, shock, and mechanical complications."] ,
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> Without monitoring, early post‑PCI arrhythmias and hypotension may be missed. The patient returns with recurrent VT.</div>
+              <p>Clinical systems matter as much as the procedure.</p>
+            `,
+            choices: [
+              { id:'c1_consequence_to_end', label:"Proceed to case recap", to:'end' }
+            ]
+          },
+          end: {
+            pill:"Case 1 complete",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: (caseState) => {
+              const decisions = caseState.decisions.map(d => `<li>${escapeHtml(d)}</li>`).join('') || '<li>(No decisions recorded)</li>';
+              return `
+                <div class="alert good"><strong>Case complete:</strong> Rapid EKG recognition and reperfusion minimized myocardial injury.</div>
+                <h3>Your decision trail</h3>
+                <ul>${decisions}</ul>
+                <h3>Recap</h3>
+                <ul>
+                  <li>Use symptoms + EKG to identify STEMI rapidly.</li>
+                  <li>Avoid delays waiting for troponin when EKG is diagnostic.</li>
+                  <li>After PCI, monitor for arrhythmias and shock; use echo when helpful.</li>
+                </ul>
+              `;
+            },
+            terminal: true
+          },
+        }
+      },
+
+      case2: {
+        title: "Case 2 — Type 2 MI from supply–demand mismatch (sepsis)",
+        tag: "Treat the trigger",
+        brief: "Troponin elevation in critical illness: don’t reflexively anticoagulate.",
+        nodes: {
+          intro: {
+            pill:"Case 2",
+            sidebar:[
+              "Type 2 MI commonly occurs with sepsis, hypoxia, anemia, tachyarrhythmia.",
+              "Management targets underlying physiology."
+            ],
+            html: () => `
+              <p><strong>Patient:</strong> 71-year-old with fever, productive cough, confusion. Past history: CKD stage 3, HTN.</p>
+              <div class="chips" aria-label="Initial vitals">
+                <span class="chip">Temp 39.2°C</span>
+                <span class="chip">BP 84/46</span>
+                <span class="chip">HR 122</span>
+                <span class="chip">SpO₂ 89% RA</span>
+              </div>
+              <p class="note">Labs: lactate 4.1 mmol/L. Initial high‑sensitivity troponin is elevated.</p>
+              <h3>Decision 1</h3>
+              <p>What is your most appropriate immediate priority?</p>
+            `,
+            choices: [
+              { id:'c2_d1_sepsis', label:"Start sepsis resuscitation bundle (oxygen, fluids/pressors as needed, cultures, antibiotics)", to:'sepsis_bundle' },
+              { id:'c2_d1_heparin', label:"Treat as NSTEMI: start heparin infusion immediately", to:'bleeding_risk' },
+              { id:'c2_d1_ignore', label:"Ignore troponin; no cardiac evaluation needed", to:'missed_context' },
+            ]
+          },
+          sepsis_bundle: {
+            pill:"Case 2",
+            sidebar:[
+              "In sepsis, troponin may reflect inflammatory myocardial depression; not automatically ACS.",
+              "Always review EKG and trend troponin; manage oxygenation/perfusion."
+            ],
+            html: () => `
+              <div class="alert good"><strong>Action:</strong> Oxygen started; blood cultures obtained; broad‑spectrum antibiotics given; fluid resuscitation begun with early vasopressor consideration.</div>
+              <p>EKG shows sinus tachycardia without ischemic ST changes.</p>
+              <p>Troponin is rechecked 3 hours later: modest rise.</p>
+              <h3>Select all that apply</h3>
+              <p>You want to evaluate the troponin elevation while resuscitating sepsis. Which workup items do you order now?</p>
+              <p class="note">Select all you would order, then continue.</p>
+            `,
+            selectAll: {
+              id:'c2_labs',
+              options: [
+                { key:'repeat_trop', label:'Repeat troponin (trend)' },
+                { key:'ekg_repeat', label:'Repeat EKG if symptoms/hemodynamics change' },
+                { key:'echo', label:'Bedside echocardiogram (LV function / wall motion)' },
+                { key:'cta_coronary', label:'CT coronary angiography immediately' },
+                { key:'d_dimer', label:'D‑dimer (screen for PE in all patients)' },
+                { key:'bnp', label:'BNP/NT‑proBNP (helpful if heart failure suspected)' },
+              ],
+              critical: ['repeat_trop','echo'],
+              relevant: ['ekg_repeat','bnp'],
+              irrelevant: ['cta_coronary','d_dimer'],
+              to: {
+                ok:'interpret',
+                missed:'interpret_missed',
+                irrelevant:'interpret_irrelevant'
+              }
+            }
+          },
+          bleeding_risk: {
+            pill:"Case 2",
+            sidebar:[
+              "Unnecessary anticoagulation in critical illness increases bleeding risk.",
+              "Differentiate Type 1 vs Type 2 vs non-ischemic injury using context + EKG + trend."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> Heparin is started before sepsis stabilization. The patient develops hematuria and a drop in hemoglobin.</div>
+              <p>Meanwhile, hypotension and hypoxia persist. The team now pivots back to sepsis management.</p>
+            `,
+            choices: [
+              { id:'c2_heparin_to_sepsis', label:"Stop and reassess: prioritize sepsis resuscitation and cardiac context", to:'sepsis_bundle' }
+            ]
+          },
+          missed_context: {
+            pill:"Case 2",
+            sidebar:[
+              "Troponin elevation still conveys risk; evaluate clinically and with EKG/trend.",
+              "Don’t ignore; contextualize."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> Troponin is ignored. Later, the patient develops worsening dyspnea and new hypotension; an echo reveals new LV dysfunction.</div>
+              <p>Now you must evaluate myocardial injury while managing sepsis.</p>
+            `,
+            choices: [
+              { id:'c2_ignore_to_sepsis', label:"Return to structured evaluation (EKG, trend troponin, consider echo)", to:'sepsis_bundle' }
+            ]
+          },
+          interpret: {
+            pill:"Case 2",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: (caseState) => {
+              const labs = caseState.labs || [];
+              return `
+                <div class="alert good"><strong>Interpretation:</strong> You ordered key items to trend and assess myocardial function while treating sepsis.</div>
+                <p><strong>Echo:</strong> mildly reduced EF with no focal wall motion abnormality.</p>
+                <p><strong>Assessment:</strong> Troponin rise fits myocardial injury from sepsis-related dysfunction / supply–demand mismatch (Type 2 MI pattern).</p>
+                <h3>Decision 2</h3>
+                <p>What is the most appropriate management focus now?</p>
+                <p class="note">Your selected workup: ${escapeHtml(labs.map(k=>k.replaceAll('_',' ')).join(', ') || 'none')}</p>
+              `;
+            },
+            choices: [
+              { id:'c2_d2_treat', label:"Optimize oxygenation/perfusion: treat sepsis, control tachycardia triggers, reassess hemoglobin", to:'end' },
+              { id:'c2_d2_cath', label:"Activate cath lab for emergent angiography solely due to troponin", to:'cath_anyway' },
+            ]
+          },
+          interpret_missed: {
+            pill:"Case 2",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: (caseState) => `
+              <div class="alert warn"><strong>Interpretation:</strong> You missed a critical item (trend troponin and/or echo). This creates diagnostic uncertainty.</div>
+              <p>Without trend or cardiac imaging, it’s harder to distinguish focal ischemia vs diffuse myocardial dysfunction.</p>
+              <h3>Decision 2</h3>
+              <p>How do you correct course?</p>
+            `,
+            choices: [
+              { id:'c2_fix_add', label:"Add repeat troponin trend and bedside echo now while continuing sepsis care", to:'interpret' },
+              { id:'c2_fix_heparin', label:"Start heparin ‘just in case’", to:'bleeding_risk' },
+            ]
+          },
+          interpret_irrelevant: {
+            pill:"Case 2",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: () => `
+              <div class="alert warn"><strong>Interpretation:</strong> You ordered several low-yield tests. This adds cost/noise and can distract from resuscitation.</div>
+              <p>Refocus on high-value evaluation: EKG review, troponin trend, and echo when indicated.</p>
+              <h3>Decision 2</h3>
+              <p>Next best step?</p>
+            `,
+            choices: [
+              { id:'c2_refocus', label:"Refocus: order troponin trend + bedside echo; continue sepsis management", to:'interpret' },
+              { id:'c2_double_down', label:"Continue broad testing before resuscitation", to:'missed_context' },
+            ]
+          },
+          cath_anyway: {
+            pill:"Case 2",
+            sidebar:[
+              "Troponin elevation alone rarely mandates emergent cath; look for ischemic symptoms/EKG changes.",
+              "In unstable patients, transport/procedure risk matters."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> Transport for angiography delays antibiotics/pressors. Coronaries are non-obstructive; patient returns in worse shock.</div>
+              <p>After stabilization, care is redirected to sepsis.</p>
+            `,
+            choices: [
+              { id:'c2_cath_to_end', label:"Proceed to recap", to:'end' }
+            ]
+          },
+          end: {
+            pill:"Case 2 complete",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: (caseState) => {
+              const decisions = caseState.decisions.map(d => `<li>${escapeHtml(d)}</li>`).join('') || '<li>(No decisions recorded)</li>';
+              return `
+                <div class="alert good"><strong>Case complete:</strong> You treated the physiologic trigger and contextualized troponin appropriately.</div>
+                <h3>Your decision trail</h3>
+                <ul>${decisions}</ul>
+                <h3>Recap</h3>
+                <ul>
+                  <li>In sepsis, troponin elevation is common and prognostic—but not automatically ACS.</li>
+                  <li>Use EKG + trend and consider echo to distinguish focal ischemia vs diffuse dysfunction.</li>
+                  <li>Avoid unnecessary anticoagulation when Type 1 MI is not supported.</li>
+                </ul>
+              `;
+            },
+            terminal:true
+          }
+        }
+      },
+
+      case3: {
+        title: "Case 3 — Pulmonary embolism vs ACS: interpreting troponin in RV strain",
+        tag: "Broaden the differential",
+        brief: "A ‘cardiac’ biomarker rises from a non-coronary cause.",
+        nodes: {
+          intro: {
+            pill:"Case 3",
+            sidebar:[
+              "Pulmonary embolism can elevate troponin from RV strain; prognostic significance.",
+              "Use symptoms, risk factors, EKG, and imaging selectively."
+            ],
+            html: () => `
+              <p><strong>Patient:</strong> 36-year-old, 10 days postpartum, sudden pleuritic chest pain and shortness of breath.</p>
+              <div class="chips" aria-label="Initial vitals">
+                <span class="chip">BP 108/64</span>
+                <span class="chip">HR 128</span>
+                <span class="chip">RR 26</span>
+                <span class="chip">SpO₂ 88% RA</span>
+              </div>
+              <p class="note">High‑sensitivity troponin is mildly elevated. EKG shows sinus tachycardia with nonspecific ST‑T changes.</p>
+              <h3>Decision 1</h3>
+              <p>What diagnosis should you prioritize and evaluate first?</p>
+            `,
+            choices: [
+              { id:'c3_d1_pe', label:"Pulmonary embolism with RV strain", to:'pe_workup' },
+              { id:'c3_d1_type1', label:"Type 1 MI (plaque rupture) as the leading diagnosis", to:'acs_only' },
+              { id:'c3_d1_anxiety', label:"Anxiety/panic attack", to:'missed_pe' },
+            ]
+          },
+          pe_workup: {
+            pill:"Case 3",
+            sidebar:[
+              "PE workup hinges on pretest probability; postpartum state increases VTE risk.",
+              "Troponin in PE suggests RV strain and higher risk; echo/CTA can help."
+            ],
+            html: () => `
+              <div class="alert good"><strong>Action:</strong> You consider PE early given postpartum status, hypoxia, tachycardia, and pleuritic pain.</div>
+              <h3>Select all that apply</h3>
+              <p>Which initial evaluation orders are most appropriate?</p>
+              <p class="note">Select all you would order, then continue.</p>
+            `,
+            selectAll: {
+              id:'c3_workup',
+              options: [
+                { key:'cta_chest', label:'CT pulmonary angiography (CTPA)' },
+                { key:'bedside_echo', label:'Bedside echocardiogram (RV strain assessment)' },
+                { key:'abg', label:'ABG (supportive, not diagnostic)' },
+                { key:'d_dimer', label:'D‑dimer (helpful only if low pretest probability)' },
+                { key:'serial_ekg', label:'Repeat EKG if clinical change' },
+                { key:'stress_test', label:'Exercise stress test today' },
+              ],
+              critical: ['cta_chest'],
+              relevant: ['bedside_echo','serial_ekg','abg'],
+              irrelevant: ['stress_test'],
+              to: {
+                ok:'pe_confirmed',
+                missed:'pe_delay',
+                irrelevant:'pe_noise'
+              }
+            }
+          },
+          acs_only: {
+            pill:"Case 3",
+            sidebar:[
+              "Mild troponin elevation is not specific for ACS.",
+              "In postpartum hypoxic tachycardia, PE is a must-not-miss diagnosis."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> ACS-only framing delays PE imaging. The patient becomes more hypoxic and anxious.</div>
+              <h3>Decision (recover)</h3>
+              <p>What do you do now?</p>
+            `,
+            choices: [
+              { id:'c3_recover_pe', label:"Reassess differential and evaluate for PE (CTPA / echo)", to:'pe_workup' },
+              { id:'c3_recover_heparin', label:"Start heparin as ACS without PE imaging", to:'heparin_anyway' },
+            ]
+          },
+          missed_pe: {
+            pill:"Case 3",
+            sidebar:[
+              "Attributing hypoxia/tachycardia to anxiety is a common pitfall.",
+              "Always rule out life-threatening causes first."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> Symptoms are attributed to panic. Later, the patient collapses with syncope and profound hypoxia.</div>
+              <p>Rapid response team requests immediate diagnostic plan.</p>
+            `,
+            choices: [
+              { id:'c3_panic_to_pe', label:"Urgently evaluate for PE (CTPA) and stabilize", to:'pe_workup' }
+            ]
+          },
+          pe_confirmed: {
+            pill:"Case 3",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: () => `
+              <div class="alert good"><strong>Result:</strong> CTPA shows bilateral pulmonary emboli. Bedside echo suggests RV strain.</div>
+              <p><strong>Interpretation:</strong> Mild troponin elevation reflects RV myocardial injury and indicates higher risk.</p>
+              <h3>Decision 2</h3>
+              <p>What is the next best management step?</p>
+            `,
+            choices: [
+              { id:'c3_d2_anticoag', label:"Begin anticoagulation and risk-stratify (consider ICU/PERT if unstable)", to:'end' },
+              { id:'c3_d2_cath', label:"Activate cath lab for coronary angiography due to troponin", to:'cath_misdirect' },
+            ]
+          },
+          pe_delay: {
+            pill:"Case 3",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: () => `
+              <div class="alert warn"><strong>Interpretation:</strong> You missed a critical test (CTPA). Without confirming PE, definitive therapy may be delayed.</div>
+              <p>Given ongoing hypoxia and postpartum risk, you must prioritize diagnostic confirmation.</p>
+              <h3>Decision (recover)</h3>
+              <p>Next step?</p>
+            `,
+            choices: [
+              { id:'c3_delay_to_ctpa', label:"Order CTPA now; start supportive care and consider empiric anticoagulation if high risk", to:'pe_confirmed' },
+              { id:'c3_delay_to_wait', label:"Wait and reassess after another troponin", to:'collapse' },
+            ]
+          },
+          pe_noise: {
+            pill:"Case 3",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: () => `
+              <div class="alert warn"><strong>Interpretation:</strong> A low-yield test was ordered (e.g., stress testing), which is unsafe in an unstable/hypoxic patient.</div>
+              <p>Refocus on PE confirmation and stabilization.</p>
+            `,
+            choices: [
+              { id:'c3_noise_to_ctpa', label:"Refocus on CTPA + supportive care", to:'pe_confirmed' }
+            ]
+          },
+          heparin_anyway: {
+            pill:"Case 3",
+            sidebar:[
+              "Anticoagulation may still be appropriate for PE, but you must confirm diagnosis and assess bleeding risk.",
+              "Targeted imaging guides escalation (e.g., thrombolysis) in high-risk PE."
+            ],
+            html: () => `
+              <div class="alert warn"><strong>Consequence:</strong> Heparin is started, but without imaging you miss RV strain severity and cannot appropriately risk-stratify.</div>
+              <p>The team orders CTPA next.</p>
+            `,
+            choices: [
+              { id:'c3_heparin_to_confirm', label:"Proceed to CTPA and risk stratification", to:'pe_confirmed' }
+            ]
+          },
+          cath_misdirect: {
+            pill:"Case 3",
+            sidebar:[
+              "Troponin in PE is prognostic; coronary angiography won’t address the primary problem.",
+              "Avoid anchoring on a biomarker without matching clinical picture."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> Angiography shows normal coronaries. Delay in PE therapy worsens hypoxia and RV strain.</div>
+            `,
+            choices: [
+              { id:'c3_cath_to_end', label:"Proceed to recap", to:'end' }
+            ]
+          },
+          collapse: {
+            pill:"Case 3",
+            sidebar:[
+              "Delay in diagnosing PE can lead to decompensation.",
+              "Use timely imaging in high-risk presentations."
+            ],
+            html: () => `
+              <div class="alert bad"><strong>Consequence:</strong> The patient experiences syncope with BP 78/40, requiring ICU transfer and urgent imaging.</div>
+              <p>CTPA is obtained emergently.</p>
+            `,
+            choices: [
+              { id:'c3_collapse_to_confirm', label:"Proceed with PE confirmation and management", to:'pe_confirmed' }
+            ]
+          },
+          end: {
+            pill:"Case 3 complete",
+            sidebar: GLOBAL_KEY_POINTS,
+            html: (caseState) => {
+              const decisions = caseState.decisions.map(d => `<li>${escapeHtml(d)}</li>`).join('') || '<li>(No decisions recorded)</li>';
+              return `
+                <div class="alert good"><strong>Case complete:</strong> You recognized PE and used troponin appropriately as a risk marker rather than an ACS trigger.</div>
+                <h3>Your decision trail</h3>
+                <ul>${decisions}</ul>
+                <h3>Recap</h3>
+                <ul>
+                  <li>Troponin can rise in PE from RV strain; it is prognostic.</li>
+                  <li>Use pretest probability and timely imaging (CTPA/echo) in high-risk patients.</li>
+                  <li>Manage PE with anticoagulation and risk stratification; avoid anchoring on biomarkers alone.</li>
+                </ul>
+              `;
+            },
+            terminal:true
+          }
+        }
+      }
+    };
+
+    // ---------- Rendering engine ----------
+    let current = { view:'home', caseId:null };
+
+    function updateSidebar(points, contextText){
+      const ul = $('#keyPoints');
+      ul.innerHTML = '';
+      (points || GLOBAL_KEY_POINTS).forEach((p) => {
+        const li = document.createElement('li');
+        li.textContent = p;
+        ul.appendChild(li);
+      });
+      $('#sidebarContext').textContent = contextText || 'This sidebar updates as you move through a case.';
+    }
+
+    function setScreen({pill, title, html, sidebarPoints, sidebarContext}){
+      $('#screenPill').textContent = pill || '';
+      $('#screenTitle').textContent = title || '';
+      const screen = $('#screen');
+      screen.innerHTML = html || '';
+      updateSidebar(sidebarPoints, sidebarContext);
+      // move focus to title for screen reader users
+      $('#screenTitle').setAttribute('tabindex','-1');
+      $('#screenTitle').focus({preventScroll:false});
+    }
+
+    function caseProgressLabel(cs){
+      if(cs.status === 'completed') return 'Completed';
+      if(cs.status === 'in_progress') return 'In progress';
+      return 'Not started';
+    }
+
+    function allCompleted(state){
+      return Object.values(state.cases).every(c => c.status === 'completed');
+    }
+
+    function renderHome(){
+      const state = getState();
+
+      const introHtml = `
+        <p><strong>Welcome.</strong> You’ll work through three short, branching clinical scenarios focused on <strong>acute cardiac events</strong> and interpretation of <strong>troponin</strong> in context.</p>
+        <h3>Objectives (Bloom’s-aligned)</h3>
+        <ul>
+          <li><strong>Remember/Understand:</strong> Describe troponin physiology and common ischemic vs non-ischemic causes of elevation.</li>
+          <li><strong>Apply:</strong> Use EKG findings, hemodynamics, and troponin trends to guide next steps in acute care.</li>
+          <li><strong>Analyze:</strong> Differentiate Type 1 MI vs Type 2 MI vs non-ischemic myocardial injury using clinical context.</li>
+          <li><strong>Evaluate/Create:</strong> Select appropriate diagnostic workup and anticipate consequences of delayed or misdirected actions.</li>
+        </ul>
+
+        <div class="divider"></div>
+        <div class="progress" aria-label="Overall progress">
+          <span><strong>Progress:</strong></span>
+          <span>Case 1: ${escapeHtml(caseProgressLabel(state.cases.case1))}</span>
+          <span>Case 2: ${escapeHtml(caseProgressLabel(state.cases.case2))}</span>
+          <span>Case 3: ${escapeHtml(caseProgressLabel(state.cases.case3))}</span>
+        </div>
+
+        <h3>Select a case</h3>
+        <p class="note">Once you start a case, it becomes unavailable to start over (to mimic clinical commitment). You can still <strong>continue</strong> where you left off.</p>
+
+        <div class="case-grid" role="list">
+          ${Object.entries(CASES).map(([id,c]) => {
+            const cs = state.cases[id];
+            const status = cs.status;
+            const isStarted = status !== 'not_started';
+            const isCompleted = status === 'completed';
+
+            const primaryLabel = isCompleted ? 'Completed' : (isStarted ? 'Continue' : 'Start');
+            const disabledStart = isStarted && !isCompleted; // “unavailable to select again” → disable Start; show Continue instead
+
+            return `
+              <div class="case-card" role="listitem" aria-label="${escapeHtml(c.title)}">
+                <span class="tag">${escapeHtml(c.tag)}</span>
+                <h3>${escapeHtml(c.title)}</h3>
+                <div class="case-meta">${escapeHtml(c.brief)}</div>
+                <div class="footer-actions">
+                  ${isCompleted ?
+                    `<button class="btn" type="button" disabled aria-disabled="true">Completed</button>`
+                    : (isStarted ?
+                        `<button class="btn btn-primary" type="button" data-action="continue" data-case="${id}">Continue</button>`
+                        : `<button class="btn btn-primary" type="button" data-action="start" data-case="${id}">Start</button>`
+                      )
+                  }
+                  ${isStarted && !isCompleted ? `<button class="btn" type="button" disabled aria-disabled="true" title="Case already started">Start again (disabled)</button>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${allCompleted(state) ? `
+          <div class="divider"></div>
+          <div class="alert good"><strong>All cases completed.</strong> You may generate your certificate of completion.</div>
+          <div class="footer-actions">
+            <button class="btn btn-primary" type="button" data-action="certificate">Generate certificate</button>
+          </div>
+        ` : ''}
+      `;
+
+      setScreen({
+        pill: 'Intro',
+        title: 'University of Lynchburg DMSc — Acute Cardiac Events',
+        html: introHtml,
+        sidebarPoints: GLOBAL_KEY_POINTS,
+        sidebarContext: 'Reference points from the Week 1 Acute Cardiac Events content.'
+      });
+
+      // wire buttons
+      $('#screen').querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.getAttribute('data-action');
+          if(action === 'start' || action === 'continue'){
+            const caseId = btn.getAttribute('data-case');
+            startOrContinueCase(caseId);
+          }
+          if(action === 'certificate'){
+            renderCertificate();
+          }
+        });
+      });
+    }
+
+    function startOrContinueCase(caseId){
+      const state = getState();
+      const cs = state.cases[caseId];
+      if(cs.status === 'not_started'){
+        setState(s => {
+          s.cases[caseId].status = 'in_progress';
+          s.cases[caseId].node = 'intro';
+          s.cases[caseId].decisions = [];
+          s.cases[caseId].labs = [];
+          return s;
+        });
+      }
+      current = { view:'case', caseId };
+      renderCase(caseId);
+    }
+
+    function recordDecision(caseId, text){
+      setState(s => {
+        s.cases[caseId].decisions.push(text);
+        return s;
+      });
+    }
+
+    function setNode(caseId, nodeId){
+      setState(s => {
+        s.cases[caseId].node = nodeId;
+        if(s.cases[caseId].status === 'not_started') s.cases[caseId].status = 'in_progress';
+        return s;
+      });
+    }
+
+    function recordLabs(caseId, selectedKeys){
+      setState(s => {
+        s.cases[caseId].labs = selectedKeys;
+        return s;
+      });
+    }
+
+    function completeCase(caseId){
+      setState(s => {
+        s.cases[caseId].status = 'completed';
+        return s;
+      });
+    }
+
+    function renderCase(caseId){
+      const state = getState();
+      const caseState = state.cases[caseId];
+      const caseDef = CASES[caseId];
+      const nodeId = caseState.node;
+      const node = caseDef.nodes[nodeId];
+      if(!node){
+        renderHome();
+        return;
+      }
+
+      const title = caseDef.title;
+      const pill = node.pill || caseDef.tag;
+      const sidebarPoints = node.sidebar || GLOBAL_KEY_POINTS;
+      const sidebarContext = `${caseDef.title} — quick reference`;
+
+      let html = '';
+      const bodyHtml = (typeof node.html === 'function') ? node.html(caseState) : String(node.html || '');
+      html += bodyHtml;
+
+      // select-all rendering
+      if(node.selectAll){
+        const sa = node.selectAll;
+        const existing = new Set(caseState.labs || []);
+        html += `
+          <div class="lab-list" role="group" aria-label="Select all that apply options">
+            ${sa.options.map(opt => `
+              <label class="lab-item">
+                <input type="checkbox" value="${escapeHtml(opt.key)}" ${existing.has(opt.key) ? 'checked' : ''} />
+                <span>${escapeHtml(opt.label)}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary" type="button" data-action="submit-select-all">Continue</button>
+          </div>
+        `;
+      }
+
+      // choices rendering
+      if(node.choices && node.choices.length){
+        html += `
+          <div class="choices" role="group" aria-label="Decision choices">
+            ${node.choices.map(ch => `
+              <button class="choice-btn" type="button" data-choice="${escapeHtml(ch.id)}" data-to="${escapeHtml(ch.to)}">
+                ${escapeHtml(ch.label)}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // terminal node actions
+      if(node.terminal){
+        html += `
+          <div class="footer-actions">
+            <button class="btn btn-primary" type="button" data-action="finish-case">Finish case</button>
+            <button class="btn" type="button" data-action="home">Return home</button>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="footer-actions">
+            <button class="btn" type="button" data-action="home">Return home</button>
+          </div>
+        `;
+      }
+
+      setScreen({ pill, title, html, sidebarPoints, sidebarContext });
+
+      const screen = $('#screen');
+
+      // decision buttons
+      screen.querySelectorAll('button[data-choice]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const to = btn.getAttribute('data-to');
+          const label = btn.textContent.trim();
+          recordDecision(caseId, label);
+          setNode(caseId, to);
+          renderCase(caseId);
+        });
+      });
+
+      // select-all submit
+      const saBtn = screen.querySelector('button[data-action="submit-select-all"]');
+      if(saBtn){
+        saBtn.addEventListener('click', () => {
+          const selected = Array.from(screen.querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
+          recordLabs(caseId, selected);
+
+          const sa = node.selectAll;
+          const selectedSet = new Set(selected);
+          const missedCritical = (sa.critical || []).some(k => !selectedSet.has(k));
+          const hasIrrelevant = (sa.irrelevant || []).some(k => selectedSet.has(k));
+
+          let nextNode = sa.to.ok;
+          if(missedCritical) nextNode = sa.to.missed;
+          else if(hasIrrelevant) nextNode = sa.to.irrelevant;
+
+          recordDecision(caseId, `Select‑all workup submitted (${selected.length} selected)`);
+          setNode(caseId, nextNode);
+          renderCase(caseId);
+        });
+      }
+
+      // terminal actions
+      const finishBtn = screen.querySelector('button[data-action="finish-case"]');
+      if(finishBtn){
+        finishBtn.addEventListener('click', () => {
+          completeCase(caseId);
+          // After completion, if all cases done, offer certificate.
+          const st = getState();
+          if(allCompleted(st)) renderCertificate();
+          else renderHome();
+        });
+      }
+
+      screen.querySelectorAll('button[data-action="home"]').forEach(btn => {
+        btn.addEventListener('click', () => renderHome());
+      });
+    }
+
+    // ---------- Certificate ----------
+    function renderCertificate(){
+      const state = getState();
+      if(!allCompleted(state)){
+        setScreen({
+          pill:'Certificate',
+          title:'Complete all cases first',
+          html:`<div class="alert warn"><strong>Not yet.</strong> Finish Cases 1–3 before generating a certificate.</div>
+                <div class="footer-actions"><button class="btn btn-primary" type="button" data-action="home">Return home</button></div>`,
+          sidebarPoints: GLOBAL_KEY_POINTS,
+          sidebarContext:'Complete all cases to unlock certificate.'
+        });
+        $('#screen').querySelector('button[data-action="home"]').addEventListener('click', renderHome);
+        return;
+      }
+
+      const name = state.certificate.studentName || '';
+      const issuedAt = state.certificate.issuedAt || new Date().toISOString();
+
+      const html = `
+        <div class="alert good"><strong>Congratulations!</strong> You completed all three acute cardiac event scenarios.</div>
+
+        <h3>Certificate details</h3>
+        <p>
+          <label for="studentName"><strong>Student name</strong></label><br />
+          <input id="studentName" type="text" value="${escapeHtml(name)}" style="width:min(520px,100%); padding:10px 12px; border-radius:12px; border:1px solid var(--border); min-height:44px;" />
+        </p>
+
+        <div class="certificate" id="certArea" aria-label="Certificate of completion">
+          <div class="row">
+            <img alt="University of Lynchburg DMSc logo" src="${LOGO_DATA_URL}" />
+            <div>
+              <h2>Certificate of Completion</h2>
+              <p style="margin:0; color:var(--muted)">Acute Cardiac Events — Decision Scenarios</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p>This certifies that</p>
+          <p style="font-size:26px; font-weight:800; margin:6px 0 10px 0;">${escapeHtml(name || '__________________________')}</p>
+          <p>has successfully completed three interactive clinical reasoning scenarios addressing:</p>
+          <ul>
+            <li>Troponin physiology and interpretation in context</li>
+            <li>Type 1 vs Type 2 MI vs non‑ischemic myocardial injury</li>
+            <li>Time-sensitive decisions in acute cardiac care and diagnostic workup</li>
+          </ul>
+          <p style="margin-top:12px; color:var(--muted)"><strong>Date:</strong> ${escapeHtml(fmtDate(issuedAt))}</p>
+          <p style="margin-top:6px; color:var(--muted)"><strong>Program:</strong> University of Lynchburg — Doctor of Medical Science (DMSc)</p>
+        </div>
+
+        <div class="footer-actions no-print">
+          <button class="btn btn-primary" type="button" data-action="issue">Save & enable downloads</button>
+          <button class="btn" type="button" data-action="download-html">Download certificate (HTML)</button>
+          <button class="btn" type="button" data-action="print">Print / Save as PDF</button>
+          <button class="btn" type="button" data-action="home">Return home</button>
+        </div>
+
+        <p class="note no-print"><strong>Tip for LMS upload:</strong> Use <em>Print / Save as PDF</em> and upload the PDF file. Some LMSs also accept an HTML file—use the HTML download if allowed.</p>
+      `;
+
+      setScreen({
+        pill:'Certificate',
+        title:'Certificate of completion',
+        html,
+        sidebarPoints: GLOBAL_KEY_POINTS,
+        sidebarContext:'Certificate is unlocked after all cases are completed.'
+      });
+
+      const screen = $('#screen');
+      const nameInput = $('#studentName');
+      nameInput?.addEventListener('input', () => {
+        setState(s => {
+          s.certificate.studentName = nameInput.value;
+          return s;
+        });
+        // live update name on certificate
+        const certArea = $('#certArea');
+        const nameLine = certArea.querySelector('p[style*="font-size:26px"]');
+        if(nameLine) nameLine.textContent = nameInput.value || '__________________________';
+      });
+
+      screen.querySelector('button[data-action="issue"]').addEventListener('click', () => {
+        setState(s => {
+          s.certificate.issued = true;
+          s.certificate.issuedAt = new Date().toISOString();
+          return s;
+        });
+        renderCertificate();
+      });
+
+      screen.querySelector('button[data-action="download-html"]').addEventListener('click', () => {
+        const st = getState();
+        const certName = (st.certificate.studentName || 'Student').replace(/[^a-z0-9_-]+/gi,'_');
+        const filename = `DMSc_Certificate_${certName}.html`;
+
+        const certHtml = `<!doctype html><html lang="en"><head><meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Certificate of Completion</title>
+          <style>body{font-family:system-ui,Segoe UI,Roboto,Arial; background:#fff; color:#0f172a; margin:0; padding:24px;} .wrap{max-width:860px; margin:0 auto;} .certificate{border:2px solid #94a3b8; border-radius:18px; padding:24px; background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);} .row{display:flex; gap:18px; align-items:center; flex-wrap:wrap;} img{width:64px; height:64px; border-radius:12px;} h2{margin:0; font-size:22px;} .muted{color:#334155;} .divider{height:1px; background:#cbd5e1; margin:14px 0;} </style></head>
+          <body><div class="wrap"><div class="certificate">${$('#certArea').innerHTML}</div><p class="muted" style="margin-top:14px">Generated from DMSc Acute Cardiac Events Scenarios.</p></div></body></html>`;
+
+        const blob = new Blob([certHtml], {type:'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      screen.querySelector('button[data-action="print"]').addEventListener('click', () => window.print());
+      screen.querySelector('button[data-action="home"]').addEventListener('click', renderHome);
+    }
+
+    // ---------- Global controls ----------
+    function init(){
+      $('#logoImg').src = LOGO_DATA_URL;
+
+      $('#btnHome').addEventListener('click', () => renderHome());
+      $('#btnReset').addEventListener('click', () => {
+        if(confirm('Reset all progress for these scenarios?')){
+          localStorage.removeItem(STORAGE_KEY);
+          renderHome();
+        }
+      });
+
+      // initial screen
+      renderHome();
+    }
+
+    init();
+  </script>
+</body>
+</html>
